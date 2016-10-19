@@ -1,0 +1,8 @@
+To play the game, you have two options:
+
+* Run mvn package:
+** it will generate an executable jar in target folder.
+*** launch: java -jar CardGame.jar
+
+* Import into Eclipse/IntelliJ:
+** Run Class: CardGameLauncher
