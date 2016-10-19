@@ -19,7 +19,7 @@ public class AStarSolver extends AbstractSolver {
 
 	/**
 	 * Constructor of A* Solver
-	 * 
+	 *
 	 * @param hm
 	 *            Takes heuristic method as argument
 	 */
@@ -41,5 +41,13 @@ public class AStarSolver extends AbstractSolver {
 				return 0;
 			}
 		});
+	}
+
+	/**
+	 * @see gb.ilias.br.sliding.block.game.algos.AbstractSolver#getName()
+	 */
+	@Override
+	public String getName() {
+		return "A*";
 	}
 }

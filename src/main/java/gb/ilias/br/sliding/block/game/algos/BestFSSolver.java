@@ -35,4 +35,12 @@ public class BestFSSolver extends AbstractSolver {
 	protected Queue<NodeEntry> createFringe() {
 		return new PriorityQueue<NodeEntry>(1000, (o1, o2) -> o1.getDistance() - o2.getDistance());
 	}
+
+	/**
+	 * @see gb.ilias.br.sliding.block.game.algos.AbstractSolver#getName()
+	 */
+	@Override
+	public String getName() {
+		return "Best First Search";
+	}
 }

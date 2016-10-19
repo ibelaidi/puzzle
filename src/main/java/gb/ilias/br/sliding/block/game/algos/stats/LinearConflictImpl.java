@@ -37,4 +37,12 @@ public class LinearConflictImpl extends HeuristicMethod {
 		return sumdistance;
 	}
 
+	/**
+	 * @see gb.ilias.br.sliding.block.game.algos.stats.HeuristicMethod#getName()
+	 */
+	@Override
+	public String getName() {
+		return "Linear-Conflict";
+	}
+
 }

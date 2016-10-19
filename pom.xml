@@ -113,14 +113,14 @@
 						</goals>
 						<configuration>
 							<!-- Optional Start -->
-							<finalName>CardGame</finalName>
+							<finalName>SlidingBlock</finalName>
 							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>UBS</shadedClassifierName>
+							<shadedClassifierName>BR</shadedClassifierName>
 							<!-- Optional End -->
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>gb.ilias.ubs.deck.cargds.game.CardGameLauncher</mainClass>
+									<mainClass>gb.ilias.br.sliding.block.game.SlidingBlockLauncher</mainClass>
 								</transformer>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
@@ -169,19 +169,19 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.7</version>
+			<version>1.7.14</version>
 		</dependency>
 
 		<!-- logback -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.1.2</version>
+			<version>1.1.7</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>1.1.2</version>
+			<version>1.1.7</version>
 		</dependency>
 		
 		<!-- UNIT Tests -->

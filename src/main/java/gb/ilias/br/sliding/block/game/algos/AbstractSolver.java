@@ -6,6 +6,7 @@ package gb.ilias.br.sliding.block.game.algos;
 import gb.ilias.br.sliding.block.game.algos.internal.Block;
 import gb.ilias.br.sliding.block.game.algos.internal.BlockCoordinate;
 import gb.ilias.br.sliding.block.game.algos.internal.Board;
+import gb.ilias.br.sliding.block.game.algos.internal.MoveDirection;
 import gb.ilias.br.sliding.block.game.algos.internal.NodeEntry;
 import gb.ilias.br.sliding.block.game.algos.stats.HeuristicMethod;
 
@@ -18,8 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Abstract Solver Engine. It is based on different implementations of
+ * algorithms.
+ *
  * @author ilias
  * @since Oct 19, 2016
+ *
+ * @see BFSSolver
+ * @see BestFSSolver
+ * @see AStarSolver
  */
 public abstract class AbstractSolver {
 
@@ -48,6 +56,7 @@ public abstract class AbstractSolver {
 		this.heuristic = hm;
 		this.boardSeen = new HashSet<Board>();
 		this.fringe = this.createFringe();
+		this.log.info("[{}] Algorithm activated with heuristic: [{}]", this.getName(), hm.getName());
 	}
 
 	/**
@@ -125,50 +134,54 @@ public abstract class AbstractSolver {
 		final Map<BlockCoordinate, Block> currTray = this.currentBoard.getTray();
 		for (int i = 0; i < this.currentBoard.getWidth(); i++) {
 			for (int j = 0; j < this.currentBoard.getHeight(); j++) {
-				if (!currTray.containsKey(new BlockCoordinate(i, j))) { // looks
-					// for
-					// empty
-					// spaces until
-					// it finds one
+				if (!currTray.containsKey(new BlockCoordinate(i, j))) {
 					if (this.log.isDebugEnabled()) {
-						this.log.debug("empty space: " + new BlockCoordinate(i, j));
+						this.log.debug("Empty space: {}", new BlockCoordinate(i, j));
 					}
 					if (i - 1 >= 0) { // tries moving blocks from the left right
 						// down and up of that empty space
-						this.applyMove(new BlockCoordinate(i - 1, j), "right");
+						this.applyMove(new BlockCoordinate(i - 1, j), MoveDirection.RIGHT);
 					}
 					if (i + 1 < this.currentBoard.getWidth()) {
-						this.applyMove(new BlockCoordinate(i + 1, j), "left");
+						this.applyMove(new BlockCoordinate(i + 1, j), MoveDirection.LEFT);
 					}
 					if (j - 1 >= 0) {
-						this.applyMove(new BlockCoordinate(i, j - 1), "down");
+						this.applyMove(new BlockCoordinate(i, j - 1), MoveDirection.DOWN);
 					}
 					if (j + 1 < this.currentBoard.getHeight()) {
-						this.applyMove(new BlockCoordinate(i, j + 1), "up");
+						this.applyMove(new BlockCoordinate(i, j + 1), MoveDirection.UP);
 					}
 				}
 			}
 		}
 		if (this.log.isDebugEnabled()) {
-			this.log.debug("number of possible moves this board can make: " + this.boardMove);
+			this.log.debug("Number of possible moves this board can make: {}", this.boardMove);
 		}
 		if (this.log.isDebugEnabled()) {
-			this.log.debug("Free memory: {} MB" + Runtime.getRuntime().freeMemory() / Math.pow(1024, 2));
+			this.log.debug("Free memory: {} MB", Runtime.getRuntime().freeMemory() / Math.pow(1024, 2));
 		}
 	}
 
-	private void applyMove(BlockCoordinate p, String direction) {
+	/**
+	 * Applies the move against the given Block of the current board.
+	 *
+	 * @param p
+	 *            Block being moved
+	 * @param direction
+	 *            Direction of the move
+	 */
+	private void applyMove(BlockCoordinate p, MoveDirection direction) {
 		final Map<BlockCoordinate, Block> currTray = this.currentBoard.getTray();
 		if (currTray.containsKey(p)) {
 			final BlockCoordinate upperl = currTray.get(p).UpperLeft();
 			BlockCoordinate moveto = new BlockCoordinate(-1, -1);
-			if (direction.equals("right")) {
+			if (direction.equals(MoveDirection.RIGHT)) {
 				moveto = new BlockCoordinate(upperl.x + 1, upperl.y);
-			} else if (direction.equals("left")) {
+			} else if (direction.equals(MoveDirection.LEFT)) {
 				moveto = new BlockCoordinate(upperl.x - 1, upperl.y);
-			} else if (direction.equals("up")) {
+			} else if (direction.equals(MoveDirection.UP)) {
 				moveto = new BlockCoordinate(upperl.x, upperl.y - 1);
-			} else if (direction.equals("down")) {
+			} else if (direction.equals(MoveDirection.DOWN)) {
 				moveto = new BlockCoordinate(upperl.x, upperl.y + 1);
 			}
 
@@ -178,26 +191,22 @@ public abstract class AbstractSolver {
 					try {
 						possibleBoard.sanityCheck();
 					} catch (final IllegalStateException e) {
-						this.log.error(e.getMessage(), e);
+						this.log.error(e.getMessage());
 					}
 				}
 				if (this.log.isDebugEnabled()) {
-					this.log.debug("new board's hashcode: " + this.currentBoard.hashCode());
+					this.log.debug("New board's hashcode: {}", this.currentBoard.hashCode());
 				}
 				if (!this.boardSeen.contains(possibleBoard)) {
 					this.numBoard++;
 					if (this.log.isDebugEnabled()) {
-						this.log.debug("new block positions in board:");
+						this.log.debug("New block positions in board:");
 						this.log.debug(possibleBoard.toString());
 					}
 					final NodeEntry n = new NodeEntry(possibleBoard, this.computeHeuristic(possibleBoard));
 					this.fringe.add(n);
 					this.boardSeen.add(possibleBoard);
 					this.boardMove++;
-				} else {
-					if (this.log.isDebugEnabled()) {
-						this.log.debug("A previously seen board type was reached and therefore not added to the fringe");
-					}
 				}
 			} catch (final IllegalStateException e) {
 				return;
@@ -219,5 +228,12 @@ public abstract class AbstractSolver {
 	 * @return
 	 */
 	protected abstract Queue<NodeEntry> createFringe();
+
+	/**
+	 * Name of the Algorithm being used to solve the puzzle.
+	 *
+	 * @return name
+	 */
+	public abstract String getName();
 
 }

@@ -9,7 +9,7 @@ import gb.ilias.br.sliding.block.game.algos.internal.Board;
 /**
  * Implementation of Manhattan Distance which is is the distance between two
  * points measured along axes at right angles.
- * 
+ *
  * @author ilias
  * @since Oct 19, 2016
  */
@@ -30,6 +30,14 @@ public class ManhattanDistanceImpl extends HeuristicMethod {
 			}
 		}
 		return sumdistance;
+	}
+
+	/**
+	 * @see gb.ilias.br.sliding.block.game.algos.stats.HeuristicMethod#getName()
+	 */
+	@Override
+	public String getName() {
+		return "Manhattan-Distance";
 	}
 
 }

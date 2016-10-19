@@ -34,4 +34,12 @@ public class BFSSolver extends AbstractSolver {
 	protected Queue<NodeEntry> createFringe() {
 		return new LinkedList<NodeEntry>();
 	}
+
+	/**
+	 * @see gb.ilias.br.sliding.block.game.algos.AbstractSolver#getName()
+	 */
+	@Override
+	public String getName() {
+		return "Breadth First Search";
+	}
 }

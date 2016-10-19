@@ -55,7 +55,6 @@ public class BlockCoordinate {
 		result = prime * result + this.x;
 		result = prime * result + this.y;
 		return result;
-		// return (Integer.toString(x) + "," + Integer.toString(y)).hashCode();
 	}
 
 }

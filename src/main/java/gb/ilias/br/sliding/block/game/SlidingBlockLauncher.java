@@ -67,7 +67,7 @@ public class SlidingBlockLauncher {
 	 * @see ManhattanDistanceImpl
 	 */
 	private static HeuristicMethod createHeuristicMethod() {
-		return null;
+		return new ManhattanDistanceImpl();
 	}
 
 	/**
@@ -84,6 +84,6 @@ public class SlidingBlockLauncher {
 	 * @see #createHeuristicMethod()
 	 */
 	private static AbstractSolver createSolver(HeuristicMethod hm) {
-		return null;
+		return new AStarSolver(hm);
 	}
 }

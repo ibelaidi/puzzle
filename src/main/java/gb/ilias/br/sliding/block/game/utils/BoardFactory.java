@@ -80,7 +80,6 @@ public class BoardFactory {
 								Integer.parseInt(point[2]));
 						final Block a = new Block(upperLeft, lowerRight);
 						boardInProgress.addBlock(a);
-						System.out.println(boardInProgress);
 					}
 				} catch (final IOException e) {
 					log.error(e.getMessage(), e);

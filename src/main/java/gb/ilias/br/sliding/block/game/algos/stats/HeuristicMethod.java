@@ -24,4 +24,11 @@ public abstract class HeuristicMethod {
 	 * @return Heuristic weight.
 	 */
 	public abstract int computeHeuristic(Board targetBoard, Board board);
+
+	/**
+	 * Name of the heuristic method being used.
+	 *
+	 * @return name
+	 */
+	public abstract String getName();
 }
