@@ -13,10 +13,10 @@ public class Block {
 	private final String	size;
 
 	public Block(BlockCoordinate one, BlockCoordinate two) {
-		if (one.x < 0 || one.y < 0 || two.x < 0 || two.y < 0) {
+		if (one.getX() < 0 || one.getY() < 0 || two.getX() < 0 || two.getY() < 0) {
 			throw new IllegalArgumentException("Points can not be negative.");
 		}
-		if (one.x > two.x || one.y > two.y) {
+		if (one.getX() > two.getX() || one.getY() > two.getY()) {
 			throw new IllegalArgumentException("BlockCoordinates are not UpperLeft and LowerRight");
 		}
 		this.UpperLeft = one;
@@ -33,11 +33,11 @@ public class Block {
 	}
 
 	public int getHeight() {
-		return this.LowerRight.y - this.UpperLeft.y + 1;
+		return this.LowerRight.getY() - this.UpperLeft.getY() + 1;
 	}
 
 	public int getWidth() {
-		return this.LowerRight.x - this.UpperLeft.x + 1;
+		return this.LowerRight.getX() - this.UpperLeft.getX() + 1;
 	}
 
 	public void changeOrientation(BlockCoordinate one, BlockCoordinate two) {
@@ -59,7 +59,8 @@ public class Block {
 
 	@Override
 	public int hashCode() {
-		return this.UpperLeft.x * 3 + this.UpperLeft.y * 11 + this.LowerRight.x * 19 + this.LowerRight.y * 17;
+		return this.UpperLeft.getX() * 3 + this.UpperLeft.getY() * 11 + this.LowerRight.getX() * 19
+				+ this.LowerRight.getY() * 17;
 	}
 
 	@Override

@@ -39,8 +39,17 @@ public class SlidingBlockLauncher {
 			}
 			String inputfile;
 			String outputfile;
+			String algo = null;
+			String heuristic = null;
 			if (args.length > 2) {
-				final int i = 1;
+				int i = 0;
+				if (args[0].startsWith("-a")) {
+					algo = args[0].replace("-a", "");
+				}
+				if (args[1].startsWith("-h")) {
+					heuristic = args[1].replace("-h", "");
+					i = 2;
+				}
 				inputfile = args[i];
 				outputfile = args[i + 1];
 			} else {
@@ -50,7 +59,7 @@ public class SlidingBlockLauncher {
 			final Board initBoard = BoardFactory.createBoard(inputfile, 0, 0);
 			final Board targetBoard = BoardFactory.createBoard(outputfile, initBoard.getHeight(),
 					initBoard.getWidth());
-			final AbstractSolver solver = createSolver(createHeuristicMethod());
+			final AbstractSolver solver = createSolver(algo, createHeuristicMethod(heuristic));
 			solver.solve(initBoard, targetBoard);
 		} catch (final Throwable e) {
 			log.error(e.getMessage(), e);
@@ -66,7 +75,10 @@ public class SlidingBlockLauncher {
 	 * @see LinearConflictImpl
 	 * @see ManhattanDistanceImpl
 	 */
-	private static HeuristicMethod createHeuristicMethod() {
+	private static HeuristicMethod createHeuristicMethod(String heuristic) {
+		if ("LC".equals(heuristic)) {
+			return new LinearConflictImpl();
+		}
 		return new ManhattanDistanceImpl();
 	}
 
@@ -83,7 +95,13 @@ public class SlidingBlockLauncher {
 	 * @see BFSSolver
 	 * @see #createHeuristicMethod()
 	 */
-	private static AbstractSolver createSolver(HeuristicMethod hm) {
+	private static AbstractSolver createSolver(String algo, HeuristicMethod hm) {
+		if ("BFS".equals(algo)) {
+			return new BFSSolver(hm);
+		}
+		if ("CFS".equals(algo)) {
+			return new BestFSSolver(hm);
+		}
 		return new AStarSolver(hm);
 	}
 }

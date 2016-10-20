@@ -9,6 +9,7 @@ import gb.ilias.br.sliding.block.game.algos.internal.Board;
 import gb.ilias.br.sliding.block.game.algos.internal.MoveDirection;
 import gb.ilias.br.sliding.block.game.algos.internal.NodeEntry;
 import gb.ilias.br.sliding.block.game.algos.stats.HeuristicMethod;
+import gb.ilias.br.sliding.block.game.utils.SlidingBlockUtils;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -39,7 +40,7 @@ public abstract class AbstractSolver {
 	protected Board					targetBoard;
 	protected Board					currentBoard;
 	protected Queue<NodeEntry>		fringe;
-	protected Set<Board>			boardSeen;
+	protected Set<Board>			boardTraversed;
 	protected NodeEntry				temp;
 	protected boolean				debug;
 	protected int					moveCount;
@@ -54,7 +55,7 @@ public abstract class AbstractSolver {
 	protected AbstractSolver(HeuristicMethod hm) {
 		super();
 		this.heuristic = hm;
-		this.boardSeen = new HashSet<Board>();
+		this.boardTraversed = new HashSet<>();
 		this.fringe = this.createFringe();
 		this.log.info("[{}] Algorithm activated with heuristic: [{}]", this.getName(), hm.getName());
 	}
@@ -69,15 +70,15 @@ public abstract class AbstractSolver {
 		this.initialBoard = root;
 		this.targetBoard = goal;
 		this.currentBoard = root;
-		this.boardSeen.add(root);
+		this.addBoardToTraversed(root);
 		this.fringe.add(new NodeEntry(root, 0));
 		//
 		this.startTime = System.currentTimeMillis();
 		this.numBoard = 1;
 		this.log.info("Initial board:");
-		this.log.info(this.initialBoard.toString());
+		this.log.info("\n{}",this.initialBoard.toString());
 		this.log.info("Target board:");
-		this.log.info(this.targetBoard.toString());
+		this.log.info("\n{}",this.targetBoard.toString());
 		this.moveCount = 0;
 		while (!this.isSolved()) {
 			this.boardMove = 0;
@@ -97,7 +98,7 @@ public abstract class AbstractSolver {
 			}
 			if (this.log.isDebugEnabled()) {
 				this.log.info("Current board:");
-				this.log.info(this.currentBoard.toString());
+				this.log.info("\n{}",this.currentBoard.toString());
 			}
 			if (this.log.isDebugEnabled()) {
 				this.log.debug("Blocks in current board: {}", this.currentBoard.getBlocks());
@@ -105,7 +106,7 @@ public abstract class AbstractSolver {
 			this.moveCount++;
 		}
 		this.log.info("Final board:");
-		this.log.info(this.currentBoard.toString());
+		this.log.info("\n{}",this.currentBoard.toString());
 		this.log.info("Move count: {}", this.moveCount);
 		this.log.info("Number of boards added to fringe: {}", this.numBoard);
 		this.stopTime = System.currentTimeMillis();
@@ -140,16 +141,17 @@ public abstract class AbstractSolver {
 					}
 					if (i - 1 >= 0) { // tries moving blocks from the left right
 						// down and up of that empty space
-						this.applyMove(new BlockCoordinate(i - 1, j), MoveDirection.RIGHT);
+						this.applyMove(new BlockCoordinate(i - 1, j, MoveDirection.RIGHT),
+								MoveDirection.RIGHT);
 					}
 					if (i + 1 < this.currentBoard.getWidth()) {
-						this.applyMove(new BlockCoordinate(i + 1, j), MoveDirection.LEFT);
+						this.applyMove(new BlockCoordinate(i + 1, j, MoveDirection.LEFT), MoveDirection.LEFT);
 					}
 					if (j - 1 >= 0) {
-						this.applyMove(new BlockCoordinate(i, j - 1), MoveDirection.DOWN);
+						this.applyMove(new BlockCoordinate(i, j - 1, MoveDirection.DOWN), MoveDirection.DOWN);
 					}
 					if (j + 1 < this.currentBoard.getHeight()) {
-						this.applyMove(new BlockCoordinate(i, j + 1), MoveDirection.UP);
+						this.applyMove(new BlockCoordinate(i, j + 1, MoveDirection.UP), MoveDirection.UP);
 					}
 				}
 			}
@@ -176,17 +178,17 @@ public abstract class AbstractSolver {
 			final BlockCoordinate upperl = currTray.get(p).UpperLeft();
 			BlockCoordinate moveto = new BlockCoordinate(-1, -1);
 			if (direction.equals(MoveDirection.RIGHT)) {
-				moveto = new BlockCoordinate(upperl.x + 1, upperl.y);
+				moveto = new BlockCoordinate(upperl.getX() + 1, upperl.getY(), MoveDirection.RIGHT);
 			} else if (direction.equals(MoveDirection.LEFT)) {
-				moveto = new BlockCoordinate(upperl.x - 1, upperl.y);
+				moveto = new BlockCoordinate(upperl.getX() - 1, upperl.getY(), MoveDirection.LEFT);
 			} else if (direction.equals(MoveDirection.UP)) {
-				moveto = new BlockCoordinate(upperl.x, upperl.y - 1);
+				moveto = new BlockCoordinate(upperl.getX(), upperl.getY() - 1, MoveDirection.UP);
 			} else if (direction.equals(MoveDirection.DOWN)) {
-				moveto = new BlockCoordinate(upperl.x, upperl.y + 1);
+				moveto = new BlockCoordinate(upperl.getX(), upperl.getY() + 1, MoveDirection.DOWN);
 			}
 
 			try {
-				final Board possibleBoard = this.currentBoard.makeMove(currTray.get(p), moveto); // makes
+				final Board possibleBoard = this.currentBoard.applyMove(currTray.get(p), moveto); // makes
 				if (this.log.isDebugEnabled()) {
 					try {
 						possibleBoard.sanityCheck();
@@ -197,7 +199,7 @@ public abstract class AbstractSolver {
 				if (this.log.isDebugEnabled()) {
 					this.log.debug("New board's hashcode: {}", this.currentBoard.hashCode());
 				}
-				if (!this.boardSeen.contains(possibleBoard)) {
+				if (!this.boardTraversed.contains(possibleBoard)) {
 					this.numBoard++;
 					if (this.log.isDebugEnabled()) {
 						this.log.debug("New block positions in board:");
@@ -205,7 +207,7 @@ public abstract class AbstractSolver {
 					}
 					final NodeEntry n = new NodeEntry(possibleBoard, this.computeHeuristic(possibleBoard));
 					this.fringe.add(n);
-					this.boardSeen.add(possibleBoard);
+					this.addBoardToTraversed(possibleBoard);
 					this.boardMove++;
 				}
 			} catch (final IllegalStateException e) {
@@ -234,6 +236,16 @@ public abstract class AbstractSolver {
 	 *
 	 * @return name
 	 */
-	public abstract String getName();
+	protected abstract String getName();
+
+	/**
+	 * @param board
+	 */
+	private void addBoardToTraversed(Board board) {
+		//if (!SlidingBlockUtils.containsBitSet(this.boardTraversed, board)) {
+			//this.boardTraversed.add(SlidingBlockUtils.convertToBitSet(board.hashCode()));
+		//}
+		this.boardTraversed.add(board);
+	}
 
 }

@@ -24,8 +24,8 @@ public class ManhattanDistanceImpl extends HeuristicMethod {
 		for (final Block b : targetBoard.getBlocks()) {
 			for (final Block i : board.getBlocks()) {
 				if (b.getType().equals(i.getType())) {
-					sumdistance += Math.abs(i.UpperLeft().x - b.UpperLeft().x);
-					sumdistance += Math.abs(i.UpperLeft().y - b.UpperLeft().y);
+					sumdistance += Math.abs(i.UpperLeft().getX() - b.UpperLeft().getX());
+					sumdistance += Math.abs(i.UpperLeft().getY() - b.UpperLeft().getY());
 				}
 			}
 		}

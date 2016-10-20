@@ -1,0 +1,38 @@
+Main Classes:
+* Board: represents the location of the blocks (1x1, 1x2, 2x2). Contains also all the moves applied to move from one state to another.
+* Block: represents the couple Upper-left and Lower-right coordinate that defines the block
+* BlockCoordinate: represents the X/Y coordinates of either upper-left or lower-right point of a block
+* BoardFactory: creates the initial and target boards from input files
+
+Solver:
+* AbstractSolver: abstract class that defines the core features for the solver engine.
+* AStarSolver: inherits from AbstractSolver, defines the specifics of the A* algorithm. Here, it defines a PriorityQueue with a specific Comparator that allows to sort the boards based on their distance between each other.
+* BestFSSOlver: inherits from AbstractSolver, defines a naive approach that is based on the closest distance from another board
+* BFSSolver: inherits from AbstractSOlver, defines the breadth first search traversal approach which consists in exploring the neighbors first before moving to the next deepest level and so on..
+
+** Further implementation: It would be interesting to use Graph Planning approach to resolve this kind of puzzle. [1] & [2]
+I will push a first implementation of this approach in my personal GitHub [3] during the next days.
+[1]: http://lig-membres.imag.fr/PPerso/membres/pellier/_media/publications/pelllier08a.pdf
+[2]: http://lig-membres.imag.fr/PPerso/membres/pellier/_media/publications/pellier10a.pdf
+[3]: https://github.com/ibelaidi
+
+A*, BFS and BestFSolver differs only from the implementation of the fringe and the Comparator used to order boards.
+
+Heuristics:
+* ManhattanDistanceImpl: defines the distance between two points measured along axes at right angles. 
+* LinearConflict:  another method to compute the distance between two boards.
+
+Running Example:
+* Run "mvn clean package" which will create an executable .jar file
+* then: java -jar SlidingBlock.jar -aAStar -hMH initial-board.txt target-board.txt
+**Arguments:
+** -a takes AStar, BFS, CFS
+** -h takes MH, LC
+
+*Run from Eclipse/IntelliJ
+* Main class: SlidingBlockTester which takes the same arguments as above.
+
+if none of these arguments are defined, then A* and Manhattan-distance will be used by default.
+
+I included the start-br.txt and goal-br.txt files which define the boards in the PDF file of the test.
+Another files start.txt and goal.txt defines 4x5 board with a moving 2x2 block

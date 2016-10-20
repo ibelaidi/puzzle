@@ -40,7 +40,7 @@ public class BestFSSolver extends AbstractSolver {
 	 * @see gb.ilias.br.sliding.block.game.algos.AbstractSolver#getName()
 	 */
 	@Override
-	public String getName() {
+	protected String getName() {
 		return "Best First Search";
 	}
 }

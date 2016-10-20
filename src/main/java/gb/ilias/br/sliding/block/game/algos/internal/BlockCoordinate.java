@@ -8,8 +8,9 @@ package gb.ilias.br.sliding.block.game.algos.internal;
  * @since Oct 18, 2016
  */
 public class BlockCoordinate {
-	public int	x;
-	public int	y;
+	private final int		x;
+	private final int		y;
+	private MoveDirection	direction;
 
 	/**
 	 * Constructor with predefined points: Upper Left or Lower Right point
@@ -22,6 +23,50 @@ public class BlockCoordinate {
 	public BlockCoordinate(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+
+	/**
+	 * Constructor with predefined points: Upper Left or Lower Right point
+	 *
+	 * @param x
+	 *            X coordinate
+	 * @param y
+	 *            Y coordinate
+	 * @param direct
+	 *            Direction to move the block to
+	 */
+	public BlockCoordinate(int x, int y, MoveDirection direct) {
+		this(x, y);
+		this.direction = direct;
+	}
+
+	/**
+	 * @return the x
+	 */
+	public int getX() {
+		return this.x;
+	}
+
+	/**
+	 * @return the y
+	 */
+	public int getY() {
+		return this.y;
+	}
+
+	/**
+	 * @return the direction
+	 */
+	public MoveDirection getDirection() {
+		return this.direction;
+	}
+
+	/**
+	 * @param direction
+	 *            the direction to set
+	 */
+	public void setDirection(MoveDirection direction) {
+		this.direction = direction;
 	}
 
 	/**

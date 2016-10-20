@@ -39,7 +39,7 @@ public class BFSSolver extends AbstractSolver {
 	 * @see gb.ilias.br.sliding.block.game.algos.AbstractSolver#getName()
 	 */
 	@Override
-	public String getName() {
+	protected String getName() {
 		return "Breadth First Search";
 	}
 }

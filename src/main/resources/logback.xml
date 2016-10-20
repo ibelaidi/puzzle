@@ -8,7 +8,7 @@
 		</layout>
 	</appender>
 
-	<logger name="gb.ilias.br.sliding.block.game" level="INFO"
+	<logger name="gb.ilias.br.sliding.block.game" level="DEBUG"
 		additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
